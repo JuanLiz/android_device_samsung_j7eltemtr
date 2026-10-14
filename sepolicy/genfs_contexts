@@ -1,0 +1,12 @@
+# Battery / charger (SM5703): hal_health reads battery/present, status, ac/type
+genfscon sysfs /devices/battery.21/power_supply                                     u:object_r:sysfs_usb_supply:s0
+
+# Touchkey (6-0020): touch/power HALs write input1/enabled (the touchscreen path is already in the common policy)
+genfscon sysfs /devices/i2c.24/i2c-6/6-0020/input/input1                            u:object_r:sysfs_input:s0
+
+# SM5703 charger (otg/online, type) and fuel gauge
+genfscon sysfs /devices/13850000.i2c/i2c-10/10-0049/sm5703-charger/power_supply          u:object_r:sysfs_usb_supply:s0
+genfscon sysfs /devices/i2c.20/i2c-4/4-0071/power_supply                                 u:object_r:sysfs_usb_supply:s0
+
+# init.rc chowns /proc/last_kmsg (only kernels this old still have it)
+genfscon proc /last_kmsg                                                                u:object_r:proc_last_kmsg:s0

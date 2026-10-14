@@ -1,0 +1,2 @@
+# find /efs -exec setfattr (init.baseband.rc) hits dirs it cannot traverse; dac_override is neverallowed
+dontaudit vendor_toolbox self:capability { dac_override dac_read_search sys_admin };

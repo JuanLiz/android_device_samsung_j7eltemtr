@@ -1,0 +1,2 @@
+# TARGET_LD_SHIM_LIBS makes the linker stat the shimmed executable from every process
+dontaudit domain mediaserver_exec:file { getattr read };

@@ -1,0 +1,3 @@
+# /efs/root/data/SLB.bin (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
+allow rild efs_file:file rw_file_perms;
+allowxperm rild efs_file:file ioctl { 0x6601 0x6602 };

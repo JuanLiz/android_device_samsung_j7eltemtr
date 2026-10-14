@@ -1,0 +1,2 @@
+# memtrack: /sys/kernel/debug/mali/mem/*/mem_profile (neverallow forbids granting it)
+dontaudit system_server debugfs:file r_file_perms;
