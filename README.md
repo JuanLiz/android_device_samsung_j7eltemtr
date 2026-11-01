@@ -26,27 +26,32 @@ smartphone from Samsung released in 2015.
 
 ## Build
 
-Based on LineageOS-Revived 18.1.
+Based on LineageOS-Revived 20.0. The device tree is derived from `android_device_samsung_j7elte`; the
+common tree, kernel and `hardware/samsung_slsi/exynos7580` come from html6405's LineageOS 20.0 branches
+for the Exynos 7580, with the j7eltemtr changes on top. Branches: `lineage-18.1` (Android 11),
+`lineage-20.0` (Android 13).
 
 `.repo/local_manifests/j7eltemtr.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <project path="device/samsung/j7eltemtr" name="JuanLiz/android_device_samsung_j7eltemtr" remote="github" revision="lineage-18.1" />
-  <project path="device/samsung/universal7580-common" name="JuanLiz/android_device_samsung_universal7580-common" remote="github" revision="lineage-18.1" />
-  <project path="kernel/samsung/universal7580" name="JuanLiz/android_kernel_samsung_universal7580" remote="github" revision="lineage-18.1" />
-  <project path="hardware/samsung" name="LineageOS/android_hardware_samsung" remote="github" revision="lineage-18.1" />
-  <project path="hardware/samsung/nfc" name="LineageOS/android_hardware_samsung_nfc" remote="github" revision="lineage-18.1" />
-  <project path="hardware/samsung_slsi/exynos" name="LineageOS/android_hardware_samsung_slsi_exynos" remote="github" revision="lineage-18.1" />
-  <project path="hardware/samsung_slsi/exynos5" name="LineageOS/android_hardware_samsung_slsi_exynos5" remote="github" revision="lineage-18.1" />
-  <project path="hardware/samsung_slsi/exynos7580" name="LineageOS/android_hardware_samsung_slsi_exynos7580" remote="github" revision="lineage-18.1" />
-  <project path="hardware/samsung_slsi/openmax" name="LineageOS/android_hardware_samsung_slsi_openmax" remote="github" revision="lineage-18.1" />
+  <project path="device/samsung/j7eltemtr" name="JuanLiz/android_device_samsung_j7eltemtr" remote="github" revision="lineage-20.0" />
+  <project path="device/samsung/universal7580-common" name="JuanLiz/android_device_samsung_universal7580-common" remote="github" revision="lineage-20.0" />
+  <project path="kernel/samsung/universal7580" name="JuanLiz/android_kernel_samsung_universal7580" remote="github" revision="lineage-20.0" />
+  <project path="hardware/samsung" name="html6405/android_hardware_samsung" remote="github" revision="lineage-20.0" />
+  <project path="hardware/samsung_slsi/exynos" name="html6405/android_hardware_samsung_slsi_exynos" remote="github" revision="lineage-19.0" />
+  <project path="hardware/samsung_slsi/exynos5" name="html6405/android_hardware_samsung_slsi_exynos5" remote="github" revision="lineage-19.0" />
+  <project path="hardware/samsung_slsi/exynos7580" name="html6405/android_hardware_samsung_slsi_exynos7580" remote="github" revision="lineage-20.0" />
+  <project path="hardware/samsung_slsi/openmax" name="html6405/android_hardware_samsung_slsi_openmax" remote="github" revision="lineage-19.0" />
+  <project path="prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9" name="LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9" remote="github" revision="lineage-19.1" />
 </manifest>
 ```
 
+The GCC 4.9 toolchain is not in the LineageOS 20.0 manifest and the 3.10 kernel needs it.
+
 ```
-repo init -u https://github.com/LineageOS-Revived/android.git -b lineage-18.1 --git-lfs
+repo init -u https://github.com/LineageOS-Revived/android.git -b lineage-20.0 --git-lfs
 repo sync
 . build/envsetup.sh
 breakfast j7eltemtr
@@ -82,6 +87,7 @@ brunch j7eltemtr
 
 ## Copyright
 
-  Copyright © 2026 JuanLiz. Based on `android_device_samsung_j7elte` by The LineageOS Project.
+  Copyright © 2026 JuanLiz. Based on `android_device_samsung_j7elte` by The LineageOS Project and
+  on the LineageOS 20.0 work for the Exynos 7580 by [html6405](https://github.com/html6405).
 
   Licensed under the Apache License, Version 2.0; see [LICENSE](LICENSE).
