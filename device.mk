@@ -121,6 +121,12 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/configs/wifi/filter_ie:system/etc/wifi/filter_ie
 
+# Fingerprint of the stock firmware the blobs come from. Set at build time so the
+# partition fingerprints are short enough for the runtime override in init/.
+BUILD_FINGERPRINT := samsung/j7eltemtr/j7eltemtr:7.1.1/NMF26X/J700T1UVU3BQK3:user/release-keys
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    PRIVATE_BUILD_DESC="j7eltemtr-user 7.1.1 NMF26X J700T1UVU3BQK3 release-keys"
+
 # Inherit from universal7580-common
 $(call inherit-product, device/samsung/universal7580-common/device-common.mk)
 
