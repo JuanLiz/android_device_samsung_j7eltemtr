@@ -14,7 +14,7 @@
 
 # Audio
 PRODUCT_PROPERTY_OVERRIDES += \
-    audio_hal.disable_two_mic=true
+    ro.vendor.audio_hal.disable_two_mic=true
 
 # Dalvik/Art
 PRODUCT_PROPERTY_OVERRIDES += \
