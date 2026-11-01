@@ -49,10 +49,18 @@ void property_override(char const prop[], char const value[])
     prop_info *pi;
 
     pi = (prop_info*) __system_property_find(prop);
-    if (pi)
+    if (pi) {
+        /* Values of PROP_VALUE_MAX characters or more are stored out of line and
+         * __system_property_update() cannot replace them without corrupting the
+         * property area; keep the build-time value in that case. */
+        if (GetProperty(prop, "").length() >= PROP_VALUE_MAX) {
+            LOG(WARNING) << "Not overriding long property " << prop;
+            return;
+        }
         __system_property_update(pi, value, strlen(value));
-    else
+    } else {
         __system_property_add(prop, strlen(prop), value, strlen(value));
+    }
 }
 
 void property_override_dual(char const system_prop[],
