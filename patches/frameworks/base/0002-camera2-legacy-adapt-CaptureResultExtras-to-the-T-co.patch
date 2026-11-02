@@ -1,0 +1,34 @@
+From 9e6a50067ef630ed74872b302bef151b7e26139b Mon Sep 17 00:00:00 2001
+From: JuanLiz <47019693+JuanLiz@users.noreply.github.com>
+Date: Sun, 1 Nov 2026 19:52:13 -0500
+Subject: [PATCH 2/2] camera2: legacy: adapt CaptureResultExtras to the T
+ constructor
+
+Change-Id: I02b006ed47fd25aebc607fe846f2eb8d4ed2ef47
+---
+ .../android/hardware/camera2/legacy/LegacyCameraDevice.java | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/core/java/android/hardware/camera2/legacy/LegacyCameraDevice.java b/core/java/android/hardware/camera2/legacy/LegacyCameraDevice.java
+index 081c97ff83e8..09fbe5eeb7ee 100644
+--- a/core/java/android/hardware/camera2/legacy/LegacyCameraDevice.java
++++ b/core/java/android/hardware/camera2/legacy/LegacyCameraDevice.java
+@@ -110,11 +110,13 @@ public class LegacyCameraDevice implements AutoCloseable {
+         if (holder == null) {
+             return new CaptureResultExtras(ILLEGAL_VALUE, ILLEGAL_VALUE, ILLEGAL_VALUE,
+                     ILLEGAL_VALUE, ILLEGAL_VALUE, ILLEGAL_VALUE, ILLEGAL_VALUE, null,
+-                    ILLEGAL_VALUE, ILLEGAL_VALUE, ILLEGAL_VALUE);
++                    ILLEGAL_VALUE, ILLEGAL_VALUE, ILLEGAL_VALUE, /*hasReadoutTimestamp*/false,
++                    /*readoutTimestamp*/0);
+         }
+         return new CaptureResultExtras(holder.getRequestId(), holder.getSubsequeceId(),
+                 /*afTriggerId*/0, /*precaptureTriggerId*/0, holder.getFrameNumber(),
+-                /*partialResultCount*/1, errorStreamId, null, holder.getFrameNumber(), -1, -1);
++                /*partialResultCount*/1, errorStreamId, null, holder.getFrameNumber(), -1, -1,
++                /*hasReadoutTimestamp*/false, /*readoutTimestamp*/0);
+     }
+ 
+     /**
+-- 
+2.43.0
+

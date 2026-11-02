@@ -1,0 +1,26 @@
+From 694b60e15d8735a072c61b908c72c5f00a0e5c61 Mon Sep 17 00:00:00 2001
+From: JuanLiz <47019693+JuanLiz@users.noreply.github.com>
+Date: Sun, 1 Nov 2026 16:19:11 -0500
+Subject: [PATCH] libsecril-client: build as a vendor module
+
+The Samsung audio HAL is a vendor module and dlopens libsecril-client.so
+from /vendor/lib, so the library has to live there too.
+---
+ ril/libsecril-client/Android.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ril/libsecril-client/Android.mk b/ril/libsecril-client/Android.mk
+index 3aa68f4..dd8bf9f 100755
+--- a/ril/libsecril-client/Android.mk
++++ b/ril/libsecril-client/Android.mk
+@@ -27,6 +27,7 @@ LOCAL_CFLAGS += -DUSES_VND_SECRIL
+ endif
+ 
+ LOCAL_MODULE:= libsecril-client
++LOCAL_VENDOR_MODULE := true
+ LOCAL_PRELINK_MODULE := false
+ 
+ include $(BUILD_SHARED_LIBRARY)
+-- 
+2.43.0
+

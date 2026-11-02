@@ -1,0 +1,139 @@
+From b87bf663a846a9b85079bf3532f6f3e95c33658f Mon Sep 17 00:00:00 2001
+From: JuanLiz <47019693+JuanLiz@users.noreply.github.com>
+Date: Sun, 1 Nov 2026 19:38:58 -0500
+Subject: [PATCH] soong: restore the legacy camera HAL1 config modules
+
+Change-Id: Icfd18d0ab7b5d0e97ec121e5e3697778ec6f8436
+---
+ build/soong/Android.bp     | 86 ++++++++++++++++++++++++++++++++++++++
+ config/BoardConfigSoong.mk |  9 ++++
+ 2 files changed, 95 insertions(+)
+
+diff --git a/build/soong/Android.bp b/build/soong/Android.bp
+index 893a1e8e..d3148877 100644
+--- a/build/soong/Android.bp
++++ b/build/soong/Android.bp
+@@ -452,3 +452,89 @@ qti_vibrator_hal {
+         },
+     },
+ }
++
++// Legacy camera HAL1 support (restored from lineage-18.1)
++soong_config_module_type {
++    name: "needs_camera_boottime",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    bool_variables: ["needs_camera_boottime"],
++    properties: ["cppflags"],
++}
++
++needs_camera_boottime {
++    name: "needs_camera_boottime_defaults",
++    soong_config_variables: {
++        needs_camera_boottime: {
++            cppflags: ["-DTARGET_CAMERA_BOOTTIME_TIMESTAMP"],
++        },
++    },
++}
++
++soong_config_module_type {
++    name: "no_cameraserver",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    bool_variables: ["has_legacy_camera_hal1"],
++    properties: [
++        "cppflags",
++    ],
++}
++
++no_cameraserver {
++    name: "no_cameraserver_defaults",
++    soong_config_variables: {
++        has_legacy_camera_hal1: {
++            cppflags: [
++                "-DNO_CAMERA_SERVER",
++                "-Wno-overloaded-virtual",
++            ],
++        },
++    },
++}
++
++soong_config_module_type {
++    name: "camera_in_mediaserver",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    bool_variables: ["has_legacy_camera_hal1"],
++    properties: [
++        "overrides",
++        "shared_libs",
++    ],
++}
++
++camera_in_mediaserver {
++    name: "camera_in_mediaserver_defaults",
++    defaults: ["no_cameraserver_defaults"],
++    soong_config_variables: {
++        has_legacy_camera_hal1: {
++            overrides: ["cameraserver"],
++            shared_libs: [
++                "android.hardware.camera.common@1.0",
++                "android.hardware.camera.device@3.4",
++                "android.hardware.camera.provider@2.6",
++                "libcameraservice",
++                "libgui",
++            ],
++        },
++    },
++}
++
++soong_config_module_type {
++    name: "camera_parameter_library",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    value_variables: ["uses_camera_parameter_lib"],
++    properties: ["whole_static_libs"],
++}
++
++camera_parameter_library {
++    name: "camera_parameter_library_defaults",
++    soong_config_variables: {
++        uses_camera_parameter_lib: {
++            whole_static_libs: ["%s"],
++        },
++    },
++}
++
+diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
+index 3ed5d4f0..93e9a4be 100644
+--- a/config/BoardConfigSoong.mk
++++ b/config/BoardConfigSoong.mk
+@@ -35,6 +35,8 @@ SOONG_CONFIG_lineageGlobalVars += \
+     gralloc_handle_has_custom_content_md_reserved_size \
+     disable_postrender_cleanup \
+     gralloc_handle_has_reserved_size \
++    has_legacy_camera_hal1 \
++    needs_camera_boottime \
+     target_health_charging_control_charging_path \
+     target_health_charging_control_charging_enabled \
+     target_health_charging_control_charging_disabled \
+@@ -50,6 +52,7 @@ SOONG_CONFIG_lineageGlobalVars += \
+     target_trust_usb_control_path \
+     target_trust_usb_control_enable \
+     target_trust_usb_control_disable \
++    uses_camera_parameter_lib \
+     uses_egl_display_array
+ 
+ SOONG_CONFIG_NAMESPACES += lineageNvidiaVars
+@@ -123,3 +126,9 @@ else
+ SOONG_CONFIG_lineageQcomVars_qcom_display_headers_namespace := $(QCOM_SOONG_NAMESPACE)/display
+ endif
+ SOONG_CONFIG_lineageQcomVars_qti_vibrator_effect_lib := $(TARGET_QTI_VIBRATOR_EFFECT_LIB)
++
++# Legacy camera HAL1 support (restored from lineage-18.1)
++SOONG_CONFIG_lineageGlobalVars_has_legacy_camera_hal1 := $(TARGET_HAS_LEGACY_CAMERA_HAL1)
++SOONG_CONFIG_lineageGlobalVars_needs_camera_boottime := $(TARGET_CAMERA_BOOTTIME_TIMESTAMP)
++TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY ?= libcamera_parameters
++SOONG_CONFIG_lineageGlobalVars_uses_camera_parameter_lib := $(TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY)
+-- 
+2.43.0
+

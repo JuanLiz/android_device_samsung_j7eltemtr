@@ -1,0 +1,28 @@
+From a60a63b0aac79cded11fc7a82846d868277c32cd Mon Sep 17 00:00:00 2001
+From: JuanLiz <47019693+JuanLiz@users.noreply.github.com>
+Date: Sun, 1 Nov 2026 16:19:26 -0500
+Subject: [PATCH 3/3] camera: 1.0-legacy: add media_plugin_headers
+
+media/hardware/HardwareAPI.h is only exported through that header
+library in 13.
+---
+ camera/device/1.0-legacy/Android.bp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/camera/device/1.0-legacy/Android.bp b/camera/device/1.0-legacy/Android.bp
+index 2005caa..a271eab 100644
+--- a/camera/device/1.0-legacy/Android.bp
++++ b/camera/device/1.0-legacy/Android.bp
+@@ -27,6 +27,9 @@ cc_library_shared {
+     static_libs: [
+         "android.hardware.camera.common@1.0-helper"
+     ],
++    header_libs: [
++        "media_plugin_headers",
++    ],
+     include_dirs: [
+         "frameworks/native/include/media/openmax"
+     ],
+-- 
+2.43.0
+

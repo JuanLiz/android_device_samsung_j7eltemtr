@@ -1,0 +1,36 @@
+From fdbaf47c12b13a92d0cb324f8bb6af9520e53069 Mon Sep 17 00:00:00 2001
+From: JuanLiz <47019693+JuanLiz@users.noreply.github.com>
+Date: Sun, 1 Nov 2026 21:07:41 -0500
+Subject: [PATCH] btm_sec: complete a pending encryption procedure on the
+ encryption change event
+
+The incoming-CTKD hardening marks the link as encrypted before reading the
+key size, so when the encryption change event finally arrives the record is
+already flagged and the event was ignored. The device record then stayed in
+BTM_SEC_STATE_ENCRYPTING and every later outgoing connection that needed
+encryption (AVDTP, RFCOMM channels) waited forever in the security queue.
+Only ignore the event when no local encryption procedure is pending.
+
+Change-Id: I9cae689e6dccfea9902ab7a4d737cba31e851fac
+---
+ system/stack/btm/btm_sec.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/system/stack/btm/btm_sec.cc b/system/stack/btm/btm_sec.cc
+index 2d87034024..0c2576b880 100644
+--- a/system/stack/btm/btm_sec.cc
++++ b/system/stack/btm/btm_sec.cc
+@@ -3459,7 +3459,9 @@ void btm_sec_encrypt_change(uint16_t handle, tHCI_STATUS status,
+     if (encr_enable) {
+       if (p_dev_rec->hci_handle == handle) {  // classic
+         if ((p_dev_rec->sec_flags & BTM_SEC_AUTHENTICATED) &&
+-            (p_dev_rec->sec_flags & BTM_SEC_ENCRYPTED)) {
++            (p_dev_rec->sec_flags & BTM_SEC_ENCRYPTED) &&
++            p_dev_rec->sec_state != BTM_SEC_STATE_ENCRYPTING &&
++            p_dev_rec->sec_state != BTM_SEC_STATE_DELAY_FOR_ENC) {
+           LOG_INFO(
+               "Link is authenticated & encrypted, ignoring this enc change "
+               "event");
+-- 
+2.43.0
+

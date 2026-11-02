@@ -1,0 +1,35 @@
+From 2a2ecf4f02de4f47208d34e35d8d5b44839fa67e Mon Sep 17 00:00:00 2001
+From: JuanLiz <47019693+JuanLiz@users.noreply.github.com>
+Date: Sun, 1 Nov 2026 21:07:41 -0500
+Subject: [PATCH] memfd: accept 3.10 kernels that backport memfd_create
+
+The 3.17 version gate made ART refuse memfd_create() on the universal7580
+3.10 kernel, which has the syscall. Without memfd the JIT cannot create the
+dual-view code cache that system_server requires and crashes at boot.
+
+Change-Id: I1c832dbca5bf229bb2d5c1db45ef4a877335f6b0
+---
+ libartbase/base/memfd.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libartbase/base/memfd.cc b/libartbase/base/memfd.cc
+index 8512a3ae13..c7fb90c8d9 100644
+--- a/libartbase/base/memfd.cc
++++ b/libartbase/base/memfd.cc
+@@ -50,9 +50,11 @@ namespace art {
+ 
+ int memfd_create(const char* name, unsigned int flags) {
+   // Check kernel version supports memfd_create(). Some older kernels segfault executing
+-  // memfd_create() rather than returning ENOSYS (b/116769556).
++  // memfd_create() rather than returning ENOSYS (b/116769556). Kernels older than 3.17 that
++  // backport the syscall return ENOSYS cleanly when they lack it, so only reject kernels
++  // older than 3.10.
+   static constexpr int kRequiredMajor = 3;
+-  static constexpr int kRequiredMinor = 17;
++  static constexpr int kRequiredMinor = 10;
+   struct utsname uts;
+   int major, minor;
+   if (uname(&uts) != 0 ||
+-- 
+2.43.0
+

@@ -39,9 +39,7 @@ for the Exynos 7580, with the j7eltemtr changes on top. Branches: `lineage-18.1`
   <project path="device/samsung/j7eltemtr" name="JuanLiz/android_device_samsung_j7eltemtr" remote="github" revision="lineage-20.0" />
   <project path="device/samsung/universal7580-common" name="JuanLiz/android_device_samsung_universal7580-common" remote="github" revision="lineage-20.0" />
   <project path="kernel/samsung/universal7580" name="JuanLiz/android_kernel_samsung_universal7580" remote="github" revision="lineage-20.0" />
-  <project path="hardware/samsung" name="JuanLiz/android_hardware_samsung" remote="github" revision="lineage-20.0" />
-  <remove-project name="LineageOS-Revived/android_hardware_lineage_interfaces" />
-  <project path="hardware/lineage/interfaces" name="JuanLiz/android_hardware_lineage_interfaces" remote="github" revision="lineage-20.0" />
+  <project path="hardware/samsung" name="LineageOS/android_hardware_samsung" remote="github" revision="lineage-20" />
   <project path="hardware/samsung_slsi/exynos" name="html6405/android_hardware_samsung_slsi_exynos" remote="github" revision="lineage-19.0" />
   <project path="hardware/samsung_slsi/exynos5" name="LineageOS/android_hardware_samsung_slsi_exynos5" remote="github" revision="lineage-18.1" />
   <project path="hardware/samsung_slsi/exynos7580" name="html6405/android_hardware_samsung_slsi_exynos7580" remote="github" revision="lineage-20.0" />
@@ -52,6 +50,7 @@ for the Exynos 7580, with the j7eltemtr changes on top. Branches: `lineage-18.1`
 ```
 repo init -u https://github.com/LineageOS-Revived/android.git -b lineage-20.0 --git-lfs
 repo sync
+device/samsung/j7eltemtr/patches/apply.sh
 . build/envsetup.sh
 breakfast j7eltemtr
 ./device/samsung/j7eltemtr/extract-files.sh /path/to/stock/system
@@ -83,6 +82,22 @@ brunch j7eltemtr
     Copy them into `vendor/samsung/universal7580-common/proprietary/lib/`.
 
   The vendor trees are not published; build them locally as described above.
+
+## Platform patches
+
+Android 13 dropped things this device still needs, so `patches/` carries the
+changes to platform repositories that the manifest cannot express. Run
+`patches/apply.sh` from the top of the tree after every `repo sync`; it
+recreates a `j7eltemtr-patches` branch in each project from the manifest
+revision and applies the patches with `git am`.
+
+| Project | What |
+| :-- | :-- |
+| `art` | accept `memfd_create` on 3.10 kernels that backport it (the JIT needs it in `system_server`) |
+| `packages/modules/Bluetooth` | finish a pending local encryption procedure on the encryption change event (outgoing A2DP/HFP after pairing) |
+| `frameworks/av`, `frameworks/base`, `system/core`, `vendor/lineage` | camera HAL1 support, from html6405's and LineageOS 21 trees (`libcameraservice` at its Android 12 state, legacy `camera2` path, `system/camera.h` extensions, Soong config) |
+| `hardware/samsung` | `libsecril-client` as a vendor module (the audio HAL loads it from `/vendor`) |
+| `hardware/lineage/interfaces` | legacy Wi-Fi HAL from LineageOS 21 built with `Android.mk`, `media_plugin_headers` for the legacy camera HAL |
 
 ## Copyright
 
