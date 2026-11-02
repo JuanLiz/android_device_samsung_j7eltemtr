@@ -38,22 +38,3 @@ on shutdown
     # Fix permissions then store the current batt_capacity_max value in the EFS partition
     chmod 600 /sys/class/power_supply/battery/batt_capacity_max
     copy /sys/class/power_supply/battery/batt_capacity_max /efs/Battery/prev_batt_capacity_max
-
-# --- j7debug: volcado de logs de arranque a /cache y /data (QUITAR cuando la ROM arranque) ---
-on post-fs
-    mkdir /cache/j7debug 0777 root root
-    exec_background u:r:su:s0 root root -- /system/bin/sh -c "dmesg > /cache/j7debug/dmesg_postfs.txt; getprop > /cache/j7debug/props_postfs.txt"
-
-on post-fs-data
-    mkdir /data/local/j7debug 0777 root root
-    start j7debug
-
-on property:sys.boot_completed=1
-    exec_background u:r:su:s0 root root -- /system/bin/sh -c "date > /cache/j7debug/boot_completed.txt"
-
-service j7debug /system/bin/sh -c "i=0; while [ $i -lt 40 ]; do dmesg > /data/local/j7debug/dmesg_$i.txt; logcat -b all -d > /data/local/j7debug/logcat_$i.txt 2>&1; getprop > /data/local/j7debug/props_$i.txt; cp -f /data/local/j7debug/dmesg_$i.txt /cache/j7debug/dmesg_last.txt; cp -f /data/local/j7debug/logcat_$i.txt /cache/j7debug/logcat_last.txt; sync; i=$((i+1)); sleep 5; done"
-    user root
-    group root
-    seclabel u:r:su:s0
-    disabled
-    oneshot
