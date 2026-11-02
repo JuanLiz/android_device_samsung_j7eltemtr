@@ -39,7 +39,7 @@ PRODUCT_PACKAGES += \
     camera.universal7580
 
 # Display
-TARGET_SCREEN_DENSITY := 320
+TARGET_SCREEN_DENSITY := 280
 
 # Graphics
 PRODUCT_AAPT_CONFIG := normal
